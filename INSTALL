@@ -1,0 +1,87 @@
+
+Linux
+
+The tagsys L-P101 reader is recognized as USB serial port. The required linux module is called 
+ftdi_sio
+Just loading it with the command below does the same
+# modprobe ftdi_sio vendor=0x403 product=0xf0e9
+
+Another reader from tagsys can be used alternatively. Its the Medio P200x. 
+Its vendor/product Id can be announced the same way:
+# modprobe ftdi_sio vendor=0x403 product=0xf0ee
+
+A Feig OBID Reader may be connected in the future. A corresponding modprobe line can be found in the feig.conf file:
+#options ftdi_sio vendor=0xab1 product=0x2 debug
+
+In order to load it at boot time, add a line with the module name in 
+/etc/modules
+
+The USB Vendor and Device Ids are currently not known to ftdi_sio, so add a line 
+options ftdi_sio vendor=0x403 product=0xf0e9
+#options ftdi_sio vendor=0x403 product=0xf0ee
+to /etc/modprobe.conf, or just copy the file tagsys.conf containig this line into
+/etc/modprobe.d
+
+Only one line will be recognized, so you have to decide according to the reader connected.
+Future kernels (>3.13.1) may recognize the readers without this.
+
+Now plugging in the USB Reader should result in creating a corresponding device named
+/dev/ttyUSB0 
+The number may vary and will be guessed by the application ;-)
+
+
+MacOSX
+
+http://www.ftdichip.com/Drivers/VCP.htm has the necessary drivers to enable the USB2serial connection.
+
+
+librxtxSerial
+
+More than that you will need to copy a valid librxtxSerial.jnilib into your path, e.g. to /Library/Java/Extensions
+A "file librxtxSerial.jnilib" should then read as follows - and should include your machine's architecture:
+
+/Library/Java/Extensions/librxtxSerial.jnilib: Mach-O universal binary with 4 architectures
+/Library/Java/Extensions/librxtxSerial.jnilib (for architecture x86_64):	Mach-O 64-bit bundle x86_64
+/Library/Java/Extensions/librxtxSerial.jnilib (for architecture i386):	Mach-O bundle i386
+/Library/Java/Extensions/librxtxSerial.jnilib (for architecture ppc7400):	Mach-O bundle ppc
+/Library/Java/Extensions/librxtxSerial.jnilib (for architecture ppc64):	Mach-O 64-bit bundle ppc64
+
+Look for a working librxtySerial.jnilib at:
+http://blog.iharder.net/2009/08/18/rxtx-java-6-and-librxtxserial-jnilib-on-intel-mac-os-x/
+
+Other ways to load a .jnilib:
+http://www.chilkatsoft.com/java-loadLibrary-MacOSX.asp
+
+
+Linux on other Platforms
+
+A ftdi_sio module may need to be ported, if not supported in the distribution.
+
+Porting rxtx to other platforms:
+ftp://ftp.qbang.org/pub/rxtx/ToyBox/2.1-7-build1/Linux/glibc-2.3.5/
+
+http://rxtx.qbang.org/wiki/index.php/Trouble_shooting
+
+Put the library of choice into the java library path. For a systemwide installation
+<JavaInstallpath>/jre/lib/arm/librxtxSerial.so will be a good choice.
+
+java.lang.UnsatisfiedLinkError: /usr/lib/jvm/java-6-openjdk/jre/lib/arm/librxtxSerial.so: /lib/libpthread.so.0: version `GLIBC_2.0' not found (required by /usr/lib/jvm/java-6-openjdk/jre/lib/arm/librxtxSerial.so) thrown while loading gnu.io.RXTXCommDriver
+Exception in thread "main" java.lang.UnsatisfiedLinkError: /usr/lib/jvm/java-6-openjdk/jre/lib/arm/librxtxSerial.so: /lib/libpthread.so.0: version `GLIBC_2.0' not found (required by /usr/lib/jvm/java-6-openjdk/jre/lib/arm/librxtxSerial.so)
+
+forget all the rest..
+apt-get install librxtx-java
+
+Wyse T50 - Ubuntu 10.04LTS
+install apt package librxtx-java
+install the gnu.io.RXTXCommDriver java.lang.ClassNotFoundException: gnu.io.RXTXCommDriver
+
+sudo apt-get   install openjdk-6-jre
+may depend on old tzdata(=2010i-1), hm
+during install, /usr/share/man/man1 directory is found to be missing - so create it beforehand:
+mkdir /usr/share/man/man1
+after that, openjdk java should appear in alternatives:
+ /etc/alternatives/java -> /usr/lib/jvm/java-6-openjdk/jre/bin/java*
+
+find a way to load the usbserial and ftdi_sio modules .. (to be continued)
+the Wyse file addon-triton.zip contains the necessary usbserial and ftdi_sio modules
+as staging seems instable due to broken Wyse Imaging support there will be an installation routine
