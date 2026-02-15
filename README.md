@@ -44,4 +44,4 @@ JkbdRF is tested and in use on systems of different vendors
 x64/x86 Linux
 Wyse T50 Ubuntu Linux
 MacOSX
-Windows XP/Win7
+Windows XP/Win7/Win10/Win11
